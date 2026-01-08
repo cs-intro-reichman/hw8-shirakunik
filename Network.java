@@ -62,6 +62,10 @@ public class Network {
      *  If any of the two names is not a user in this network,
      *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
+
+
+        if (name1.equals(name2)){
+            return false;  }
         if (getUser(name1) == null){
             return false; }
         if (getUser(name2) == null){
@@ -88,9 +92,12 @@ public class Network {
 
             if (users[i] == a){
                 continue; }
-
-            if (a.countMutual(users[i]) >= maxmutal){
-                maxmutal = a.countMutual(users[i]);
+            if (a.follows(users[i].getName()) == true){
+                 continue;
+            }
+            int current = a.countMutual(users[i]);
+            if ( current > maxmutal){
+                maxmutal = current;
                 mostRecommendedUserToFollow = users[i];
             }
                 
@@ -105,8 +112,12 @@ public class Network {
      *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
 
-       User mostPopularUser = null;
-       int maxfol = 0; 
+       if (userCount == 0) {
+        return null; 
+       } 
+       
+       User mostPopularUser = users[0];
+       int maxfol = followeeCount(users[0].getName()); 
 
        for (int i = 0; i<userCount; i++){
 
@@ -117,7 +128,6 @@ public class Network {
             mostPopularUser = users[i];
         }
     }
-        if  (mostPopularUser == null) return null; 
         return mostPopularUser.getName();
     }
 
@@ -137,10 +147,14 @@ public class Network {
     // Returns a textual description of all the users in this network, and who they follow.
     public String toString() {
 
-       String ans2 = " ";
+       String ans2 = "";
 
        for (int i =0; i<userCount; i++){
-       ans2 = ans2 +users[i]; 
+       ans2 = ans2 + users[i] + "\n"; 
+       }
+
+       if (userCount == 0){
+        return "Network:";
        }
 
         return "Network:\n" + ans2; 
